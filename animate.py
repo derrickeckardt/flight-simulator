@@ -1,7 +1,9 @@
 import numpy as np
 from math import *
 import matplotlib
+matplotlib.use('Agg')  # https://stackoverflow.com/questions/37604289/tkinter-tclerror-no-display-name-and-no-display-environment-variable
 import matplotlib.pyplot as plt
+plt.rcParams['animation.ffmpeg_path'] = '/usr/bin/ffmpeg'
 import matplotlib.animation as animation
 
 # this function gets called every time a new frame should be generated.
@@ -37,7 +39,7 @@ frame_count = 50
 ani = animation.FuncAnimation(fig, animate_above, frames=range(0,frame_count))
 
 # uncomment if you want to save your animation as a movie. :)
-#ani.save("movie.mp4")
+ani.save("movie.mp4")
 
 plt.show()
 
