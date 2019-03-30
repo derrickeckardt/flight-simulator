@@ -32,24 +32,24 @@ def animate_above(frame_number):
     pr=[]
     pc=[]
     for p in pts3:
-        pr += [(p[0])/100000]
-        pc += [(p[1]+ty)/100000]
+        px = (p[0])/100000
+        py = (p[1]+ty)/100000
     
         
-        # p_a = np.array([p[0],(p[1]+ty),p[2],1])
-        # p_b = np.matmul(tmatrix,p_a)
+        p_a = np.array([px,py,p[2],1])
+        p_b = np.matmul(tmatrix,p_a)
 
         # # print(p_b)
-        # # if p_b[2] > 0:
-        # pr += [p_b[0] / p_b[2]]
-        # pc += [p_b[1] / p_b[2]]
+        if p_b[2] > 0:
+            pr += [p_b[0] / p_b[2]]
+            pc += [p_b[1] / p_b[2]]
         # print(p_b[0] / p_b[2], p_b[1] / p_b[2], p_b[2])
     # print(pr)
     # print(max(pr),max(pc))
 
     plt.cla()
-    plt.gca().set_xlim([-0.1,0.1])
-    plt.gca().set_ylim([-0.02,0.02])
+    plt.gca().set_xlim([-0.0001,0.0001])
+    plt.gca().set_ylim([-0.005,0.01])
     line, = plt.plot(pr, pc, 'k',  linestyle="", marker=".", markersize=2)
     return line,
 
