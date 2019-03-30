@@ -25,19 +25,31 @@ def animate_above(frame_number):
     global tx, ty, tz, yaw, tilt, twist, focal
 
     ty+=20
-    tx+=10
 
     tmatrix = matrix_transform(tx, ty, tz, yaw, tilt, twist, focal)
+    # print(tmatrix)
 
     pr=[]
     pc=[]
     for p in pts3:
-        pr += [p[0]/100000]
+        pr += [(p[0])/100000]
         pc += [(p[1]+ty)/100000]
+    
+        
+        # p_a = np.array([p[0],(p[1]+ty),p[2],1])
+        # p_b = np.matmul(tmatrix,p_a)
+
+        # # print(p_b)
+        # # if p_b[2] > 0:
+        # pr += [p_b[0] / p_b[2]]
+        # pc += [p_b[1] / p_b[2]]
+        # print(p_b[0] / p_b[2], p_b[1] / p_b[2], p_b[2])
+    # print(pr)
+    # print(max(pr),max(pc))
 
     plt.cla()
-    plt.gca().set_xlim([-0.002,0.002])
-    plt.gca().set_ylim([-0.002,0.002])
+    plt.gca().set_xlim([-0.1,0.1])
+    plt.gca().set_ylim([-0.02,0.02])
     line, = plt.plot(pr, pc, 'k',  linestyle="", marker=".", markersize=2)
     return line,
 
@@ -46,13 +58,13 @@ with open("airport.pts", "r") as f:
     pts3 = [ [ float(x) for x in l.split(" ") ] for l in f.readlines() ]
     
 # initialize plane pose (translation and rotation)
-(tx, ty, tz) = (10, 20, -10)
-(yaw, tilt, twist) = (pi, pi/2, 0)
+(tx, ty, tz) = (0, 0, 0) # (digits)
+(yaw, tilt, twist) = (0, 0, 0)
 focal = 0.002
 
 # create animation!
 fig, ax  = plt.subplots()
-frame_count = 50
+frame_count = 10
 ani = animation.FuncAnimation(fig, animate_above, frames=range(0,frame_count))
 
 # uncomment if you want to save your animation as a movie. :)
