@@ -21,8 +21,8 @@ def matrix_transform(tx,ty,tz,yaw,tilt,twist, focal):
     return final_matrix
 
 # initialize plane pose (translation and rotation)
-(tx, ty, tz) = (0, 0, 0) # (digits)
-(yaw, tilt, twist) = (0, -pi/2, 0)
+(tx, ty, tz) = (0, 0, -10) # (digits)
+(yaw, tilt, twist) = (pi, -pi/2, 0)
 focal = 0.002
 
 # this function gets called every time a new frame should be generated.
@@ -42,7 +42,7 @@ def animate_above(frame_number):
         p_b = np.matmul(tmatrix,p_a)
         # print(p, p_b)
 
-        if p_b[2] >= 0:
+        if p_b[2] <= 0:
             pr += [-focal * p_b[0] / p_b[2]]
             pc += [-focal * p_b[1] / p_b[2]] 
         # print(p_b[0] / p_b[2], p_b[1] / p_b[2], p_b[2])
@@ -52,8 +52,9 @@ def animate_above(frame_number):
     plt.gca().set_xlim([-.000002,.000002]) #[min(pr),max(pr)]
     plt.gca().set_ylim([-0.000001,0.000001])  #[min(pc),max(pc)]
 
-    ty+=20
-    tz+=0
+    ty+=5
+    tz+=-5
+    twist += 0#pi/18
 
     line, = plt.plot(pr, pc, 'k',  linestyle="", marker=".", markersize=2)
 
@@ -65,10 +66,10 @@ with open("airport.pts", "r") as f:
     
 # create animation!
 fig, ax  = plt.subplots()
-frame_count = 35
+frame_count = 120
 ani = animation.FuncAnimation(fig, animate_above, frames=range(0,frame_count))
 
 # uncomment if you want to save your animation as a movie. :)
-ani.save("movie.mp4")
+ani.save("movie.mp4", fps=12)
 
 plt.show()
