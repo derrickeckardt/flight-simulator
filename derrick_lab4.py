@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 plt.rcParams['animation.ffmpeg_path'] = '/usr/bin/ffmpeg'
 import matplotlib.animation as animation
 
+print("Simulating flight.  Expected run time of one minute or less")
+
 # perform matrix transformation
 def matrix_transform(tx,ty,tz,yaw,tilt,twist, focal):
     focal_matrix = np.array([[focal,0,0],[0,focal,0],[0,0,1]]) 
@@ -29,7 +31,21 @@ focal = 0.002
 def animate_above(frame_number): 
     global tx, ty, tz, yaw, tilt, twist, focal
 
-    tmatrix = matrix_transform(tx, ty, tz, yaw, tilt, twist, focal)
+    # for oval flight
+    # equation of an ellipse
+    # y^2 / b^2  + x^2 / a^2  = 1
+    # using parametric equations
+    a = -500
+    b = -600
+    tx = a * sin(yaw+(frame_number*pi/180))
+    ty = (b*-1) - b * cos(yaw+(frame_number*pi/180))
+    # to vary elelvation
+    c = -100
+    tz = c * sin(frame_number*pi/360)
+    yaw_i = pi - (frame_number*pi/180)
+    # print(frame_number, tx,ty,tz,yaw_i/pi) - testing code
+    
+    tmatrix = matrix_transform(tx, ty, tz, yaw_i, tilt, twist, focal)
     # print(tmatrix)
 
     pr=[]
@@ -45,16 +61,14 @@ def animate_above(frame_number):
         if p_b[2] <= 0:
             pr += [-focal * p_b[0] / p_b[2]]
             pc += [-focal * p_b[1] / p_b[2]] 
-        # print(p_b[0] / p_b[2], p_b[1] / p_b[2], p_b[2])
-    # print(max(pr), min(pr),max(pc), min(pc))
 
     plt.cla()
     plt.gca().set_xlim([-.000002,.000002]) #[min(pr),max(pr)]
     plt.gca().set_ylim([-0.000001,0.000001])  #[min(pc),max(pc)]
 
-    ty+=5
-    tz+=-5
-    twist += 0#pi/18
+    # take-off flight only, commented out for oval flight instead.
+    # ty+=2
+    # tz+= -2
 
     line, = plt.plot(pr, pc, 'k',  linestyle="", marker=".", markersize=2)
 
@@ -66,10 +80,11 @@ with open("airport.pts", "r") as f:
     
 # create animation!
 fig, ax  = plt.subplots()
-frame_count = 120
+frame_count = 360
 ani = animation.FuncAnimation(fig, animate_above, frames=range(0,frame_count))
 
 # uncomment if you want to save your animation as a movie. :)
-ani.save("movie.mp4", fps=12)
+file_name = "movie_oval.mp4"
+ani.save(file_name, fps=24)
 
-plt.show()
+print("Flight path outputted to '"+file_name+"'.  It's a dizzying ride.")
